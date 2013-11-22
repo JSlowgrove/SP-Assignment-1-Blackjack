@@ -213,7 +213,10 @@ void play(int* current)
 	bool cont = true, playerBlackjack = false, dealerBlackjack = false, a = false;
 	cardStruct dealerHand[11];
 	cardStruct playerHand[11];
-	char choice[100];
+
+	char* choice;
+	choice = new char[100];
+
 	int cardsInHand = 2, playerScore = 0, ace = 0;
 
 	//drawing first 2 cards for dealer and player#########################################################################
@@ -413,6 +416,9 @@ void play(int* current)
 	{
 		dealerTurn(&current, playerScore, dealerHand);
 	}
+
+	delete [] choice;
+	choice = 0;
 }
 
 void dealerTurn(int** current, int playerScore, cardStruct dealerHand[])
@@ -871,12 +877,3 @@ void king(char set)
 	cout<<"		|"<<set<<"   K|\n";
 	cout<<"		 ----- ";
 }
-
-/*
-int* vertices = 0;
-
-vertices = new int[500];
-
-delete [] vertices;
-vertices = 0;
-*/
