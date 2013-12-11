@@ -4,8 +4,6 @@
 #include <ctime>
 #include <string>
 
-//git test
-
 using namespace std;
 
 void splash(), title(), gameSetup(), play(int*), flip(int, char), win(), lose(), again();
@@ -90,13 +88,14 @@ int main(){
 	}
 	return 0;
 }
-
+//splash screen for begining
 void splash()
 {
 	cout<<"\n\n\n        Blackjack Assignment - James Ronald John Slowgrove";
 	Sleep(2000);
 } //splash screen
 
+//title animation
 void title()
 {
 	system("CLS"); 
