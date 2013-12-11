@@ -4,6 +4,8 @@
 #include <ctime>
 #include <string>
 
+//git test
+
 using namespace std;
 
 void splash(), title(), gameSetup(), play(int*), flip(int, char), win(), lose(), again();
@@ -58,7 +60,14 @@ int main(){
 		case 'r':
 			system("CLS");
 			cout<<"RULES OF BLACKJACK:\n";
-			cout<<"The aim is to get a score as close to 21 as possible, the closest player wins.\nCards 2 to 10 are equal to there value.\nKing,Queen and Jack are equal to 10 and Ace is equal to 1 or 11 depending on the players choice.\nEach player starts with 2 cards and each turn the player gets the choice to stand(keep the hand) or hit(take a card from the deck).\nThis goes on until the player either stands or goes bust(has a hand with a higher value than 21), if the player goes bust they lose.\nWhen all players are done, the dealer shows his hand, if he has a blackjack (21) all players loose unless they also have blackjack in which case they have there bet returned.\nIf the Dealers hand is lower than 17 then they hit, else they stand.\nIf they Dealer goes bust all they player wins, else any player with more points than the dealer wins, and get a bouns equal to half there original wager.\n\n";
+			cout<<"The aim is to get a score as close to 21 as possible, the closest player wins.\n";
+			cout<<"Cards 2 to 10 are equal to there value.\n";
+			cout<<"King,Queen and Jack are equal to 10 and Ace is equal to 1 or 11 depending on the players choice.\n";
+			cout<<"Each player starts with 2 cards and each turn the player gets the choice to stand(keep the hand) or hit(take a card from the deck).\n";
+			cout<<"This goes on until the player either stands or goes bust(has a hand with a higher value than 21), if the player goes bust they lose.\n";
+			cout<<"When all players are done, the dealer shows his hand, if he has a blackjack (21) all players loose unless they also have blackjack in which case they have there bet returned.\n";
+			cout<<"If the Dealers hand is lower than 17 then they hit, else they stand.\n";
+			cout<<"If they Dealer goes bust all they player wins, else any player with more points than the dealer wins, and get a bouns equal to half there original wager.\n\n";
 			system("pause");
 			break;
 
