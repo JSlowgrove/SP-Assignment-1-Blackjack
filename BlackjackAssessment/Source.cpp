@@ -16,7 +16,7 @@ struct cardStruct
 	char set;
 };
 cardStruct card[52];
-void hand(int,cardStruct[]), dealerTurn(int**,int,cardStruct[]);
+void hand(int,cardStruct[]), dealerTurn(int**,int,cardStruct[],int);
 //------------------------------------------------------------------------------------------------------------------------------------
 //end of global declarations
 //------------------------------------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ int main(){
 			system("CLS");
 			if (money == 0 || money < 0) //if the player has no money then they are given £1000 to play with
 			{
-				cout<<endl<<"As you have no money your number of coins in casino credit have been set to 1000"<<endl<<" and the casino has taken your most valuable possession as collateral"<<endl<<endl;
+				cout<<endl<<"As you have no money your number of coins in casino credit have been set to 1000"<<endl<<"and the casino has taken your most valuable possession as collateral"<<endl<<endl;
 				money = 1000;
 				system("pause");
 				system("CLS");
@@ -92,8 +92,8 @@ int main(){
 			break;
 
 		case 'C':
-		case 'c':
-			system("CLS");//Displays the credits to the screen
+		case 'c'://Displays the credits to the screen
+			system("CLS");
 			cout<<"CREDITS:\nMade by Jamie Ronald John Slowgrove\n\n";
 			system("pause");
 			break;
@@ -260,9 +260,9 @@ void play(int* current)
 	//------------------------------------------------------------------------------------------------------------------------------------
 	//asks how much money that the player wants to bet
 	//------------------------------------------------------------------------------------------------------------------------------------
-
-
-
+	cout<<"How much do you want to bet?"<<endl;
+	cin>>bet;
+	system("CLS");
 	//------------------------------------------------------------------------------------------------------------------------------------
 	//drawing first 2 cards for dealer and player
 	//------------------------------------------------------------------------------------------------------------------------------------
@@ -464,7 +464,7 @@ void play(int* current)
 	// if dealer gets a go
 	if (stand == true)
 	{
-		dealerTurn(&current, playerScore, dealerHand);
+		dealerTurn(&current, playerScore, dealerHand,bet);
 	}
 
 	delete [] choice;
@@ -474,7 +474,7 @@ void play(int* current)
 //------------------------------------------------------------------------------------------------------------------------------------
 //Dealers turn
 //------------------------------------------------------------------------------------------------------------------------------------
-void dealerTurn(int** current, int playerScore, cardStruct dealerHand[])
+void dealerTurn(int** current, int playerScore, cardStruct dealerHand[], int bet)
 {	
 	int cardsInHand = 2;
 	bool cont = true;
@@ -593,6 +593,7 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[])
 				else
 				{
 					cout << "Dealer wins";
+					money = money - bet;
 					cont = false;
 					cin.ignore();
 					cin.get();
@@ -613,6 +614,7 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[])
 			else
 			{
 				cout << "\n\nDEALER IS BUST!";
+				money = money + bet;
 				cont = false;
 				cin.ignore();
 				cin.get();
