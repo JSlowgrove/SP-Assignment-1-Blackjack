@@ -2,21 +2,30 @@
 #include <Windows.h>
 #include <cctype>
 #include <ctime>
-#include <string>
 
 using namespace std;
 
+//------------------------------------------------------------------------------------------------------------------------------------
+//global declarations
+//------------------------------------------------------------------------------------------------------------------------------------
 void splash(), title(), gameSetup(), play(int*), flip(int, char), win(), lose(), again();
-
+int money = 0;
 struct cardStruct
 {
 	int num;
 	char set;
 };
-
 cardStruct card[52];
 void hand(int,cardStruct[]), dealerTurn(int**,int,cardStruct[]);
+//------------------------------------------------------------------------------------------------------------------------------------
+//end of global declarations
+//------------------------------------------------------------------------------------------------------------------------------------
 
+
+
+//------------------------------------------------------------------------------------------------------------------------------------
+//main menu [also main function]
+//------------------------------------------------------------------------------------------------------------------------------------
 int main(){
 	splash();
 	title();
@@ -35,14 +44,27 @@ int main(){
 		cout<<"		|  -  |\n";
 		cout<<"		|Cards|\n";
 		cout<<"		 ----- \n\n";
-		cout<<"Welcome to Alpha Cards - Blackjack, please choose your task:\n(Play = P, Rules = R, Credits = C, End = E)\n";
+		cout<<"Welcome to Alpha Cards - Blackjack, please choose your task:\n(Play - P, Rules - R, Credits - C, End - E)\n";
 		cin>>choice[0];
 		switch(choice[0])
 		{
 		case 'P':
 		case 'p':
 			system("CLS");
-			if (first == true || 52 - current < 22) //checks if need to shuffle
+			if (money == 0 || money < 0) //if the player has no money then they are given £1000 to play with
+			{
+				cout<<endl<<"As you have no money your number of coins in casino credit have been set to 1000"<<endl<<" and the casino has taken your most valuable possession as collateral"<<endl<<endl;
+				money = 1000;
+				system("pause");
+				system("CLS");
+			}
+			else // if the player has money then it is displayed
+			{
+				cout<<"Current money: "<<money<<" coins"<<endl;
+				system("pause");
+				system("CLS");
+			}
+			if (first == true || 52 - current < 22) //checks if need to shuffle [needs to shuffle if has not been shuffled or if has reached the end of the deck (22 is the max number of cards that can be used in a game)]
 			{
 				current = 0;
 				first = false;
@@ -55,7 +77,7 @@ int main(){
 			break;
 
 		case 'R':
-		case 'r':
+		case 'r': //Displays the rules of blackjack to the screen
 			system("CLS");
 			cout<<"RULES OF BLACKJACK:\n";
 			cout<<"The aim is to get a score as close to 21 as possible, the closest player wins.\n";
@@ -71,8 +93,8 @@ int main(){
 
 		case 'C':
 		case 'c':
-			system("CLS");
-			cout<<"CREDITS:\nMade by Jamie Slowgrove\n\n";
+			system("CLS");//Displays the credits to the screen
+			cout<<"CREDITS:\nMade by Jamie Ronald John Slowgrove\n\n";
 			system("pause");
 			break;
 
@@ -88,14 +110,19 @@ int main(){
 	}
 	return 0;
 }
-//splash screen for begining
+
+//------------------------------------------------------------------------------------------------------------------------------------
+//splash screen
+//------------------------------------------------------------------------------------------------------------------------------------
 void splash()
 {
 	cout<<"\n\n\n        Blackjack Assignment - James Ronald John Slowgrove";
 	Sleep(2000);
-} //splash screen
+}
 
+//------------------------------------------------------------------------------------------------------------------------------------
 //title animation
+//------------------------------------------------------------------------------------------------------------------------------------
 void title()
 {
 	system("CLS"); 
@@ -151,6 +178,9 @@ void title()
 	Sleep(1000);
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------
+//inital setup for the game [only called when deck needs reshuffle
+//------------------------------------------------------------------------------------------------------------------------------------
 void gameSetup()
 {	
 	char set;
@@ -214,18 +244,28 @@ void gameSetup()
 	}
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------
+//starts the game and the players turn
+//------------------------------------------------------------------------------------------------------------------------------------
 void play(int* current)
 {
 	bool cont = true, playerBlackjack = false, dealerBlackjack = false, a = false;
 	cardStruct dealerHand[11];
 	cardStruct playerHand[11];
-
+	int bet  = 0;
 	char* choice;
 	choice = new char[100];
 
 	int cardsInHand = 2, playerScore = 0, ace = 0;
+	//------------------------------------------------------------------------------------------------------------------------------------
+	//asks how much money that the player wants to bet
+	//------------------------------------------------------------------------------------------------------------------------------------
 
-	//drawing first 2 cards for dealer and player#########################################################################
+
+
+	//------------------------------------------------------------------------------------------------------------------------------------
+	//drawing first 2 cards for dealer and player
+	//------------------------------------------------------------------------------------------------------------------------------------
 	playerHand[0] = card[*current];
 	if (playerHand[0].num == 1)
 	{
@@ -273,9 +313,9 @@ void play(int* current)
 	Sleep(1000);
 	flip(dealerHand[0].num, dealerHand[0].set);
 
-	//####################################################################################################################
-
-	//checks for blackjack################################################################################################
+	//------------------------------------------------------------------------------------------------------------------------------------
+	//checks for inital blackjack
+	//------------------------------------------------------------------------------------------------------------------------------------
 	if (playerHand[0].num == 1)
 	{
 		if (playerHand[1].num == 10 || playerHand[1].num == 11 || playerHand[1].num == 12 || playerHand[1].num == 13)
@@ -313,6 +353,7 @@ void play(int* current)
 	if (playerBlackjack && dealerBlackjack == false)
 	{
 		cout<< "\n\nPlayer has Blackjack, Player Wins";
+		money = money + bet +(bet/2); //player wins bet and bonus equal to half the bet
 		cin.ignore();
 		cin.get();
 		//win
@@ -329,14 +370,16 @@ void play(int* current)
 	if (playerBlackjack == false && dealerBlackjack)
 	{
 		cout<< "\n\nDealer has Blackjack, Dealer Wins";
+		money = money - bet;
 		cin.ignore();
 		cin.get();
 		//lose
 		cont = false;
 	}
-	//####################################################################################################################
 
-	//Player Turn#########################################################################################################
+	//------------------------------------------------------------------------------------------------------------------------------------
+	//Players Turn
+	//------------------------------------------------------------------------------------------------------------------------------------
 	bool stand = false;
 	while (cont)
 	{
@@ -410,6 +453,7 @@ void play(int* current)
 		else
 		{
 			cout << "\n\nYOU ARE BUST!";
+			money = money - bet;
 			cont = false;
 			cin.ignore();
 			cin.get();
@@ -427,6 +471,9 @@ void play(int* current)
 	choice = 0;
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------
+//Dealers turn
+//------------------------------------------------------------------------------------------------------------------------------------
 void dealerTurn(int** current, int playerScore, cardStruct dealerHand[])
 {	
 	int cardsInHand = 2;
@@ -575,6 +622,10 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[])
 	}
 }
 
+
+//------------------------------------------------------------------------------------------------------------------------------------
+//display hand
+//------------------------------------------------------------------------------------------------------------------------------------
 void hand(int cardsInHand,cardStruct Hand[])
 {
 	for (int i = 0; i <cardsInHand; i++)
@@ -623,7 +674,9 @@ void hand(int cardsInHand,cardStruct Hand[])
 	}
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------
 //flip animation
+//------------------------------------------------------------------------------------------------------------------------------------
 void flip(int num, char set)
 { 
 	system("CLS"); 
@@ -727,7 +780,9 @@ void flip(int num, char set)
 	Sleep(2000);
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------
 //card displays
+//------------------------------------------------------------------------------------------------------------------------------------
 void ace(char set)
 {
 	cout<<"\n\n\n";
