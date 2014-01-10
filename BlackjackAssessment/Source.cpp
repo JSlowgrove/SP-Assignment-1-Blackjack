@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <cctype>
 #include <ctime>
+#include <cstring>
 
 using namespace std;
 
@@ -26,13 +27,18 @@ void hand(int,cardStruct[]), dealerTurn(int**,int,cardStruct[],int);
 //------------------------------------------------------------------------------------------------------------------------------------
 //main menu [also main function]
 //------------------------------------------------------------------------------------------------------------------------------------
-int main(){
-	splash();
-	title();
-	int current;
+int main()
+{
+	splash();//display splash screen
+	title();//display title screen
+	int current, index;
 	bool on = true, first = true;
 	system("CLS");
-	char choice[1];
+	char choice[21];
+	for (index = 0; index < 21; index++)//initalise array
+	{
+		choice[index] = 0;
+	}
 	while(on)
 	{
 		system("CLS");
@@ -44,25 +50,29 @@ int main(){
 		cout<<"		|  -  |\n";
 		cout<<"		|Cards|\n";
 		cout<<"		 ----- \n\n";
-		cout<<"Welcome to Alpha Cards - Blackjack, please choose your task:\n(Play - P, Rules - R, Credits - C, End - E)\n";
-		cin>>choice[0];
-		switch(choice[0])
+		cout<<"Welcome to Alpha Cards - Blackjack, please choose your task:\n[Play, Rules, Credits, End]\n";
+		cin>>&choice[0];
+		for (index = 0; index < 21; index++)//sets choice uppercase for validation
 		{
-		case 'P':
-		case 'p':
+			choice[index] = toupper(choice[index]);
+		}
+		if(choice[0] == 'P' && choice[1] == 'L' && choice[2] == 'A' && choice[3] == 'Y'  && choice[4] == '\0')
+		{
 			system("CLS");
 			if (money == 0 || money < 0) //if the player has no money then they are given £1000 to play with
 			{
 				cout<<endl<<"As you have no money your number of coins in casino credit have been set to 1000"<<endl<<"and the casino has taken your most valuable possession as collateral"<<endl<<endl;
 				money = 1000;
 				system("pause");
-				system("CLS");
+				cin.ignore();
+				cin.get();
 			}
 			else // if the player has money then it is displayed
 			{
 				cout<<"Current money: "<<money<<" coins"<<endl;
 				system("pause");
-				system("CLS");
+				cin.ignore();
+				cin.get();
 			}
 			if (first == true || 52 - current < 22) //checks if need to shuffle [needs to shuffle if has not been shuffled or if has reached the end of the deck (22 is the max number of cards that can be used in a game)]
 			{
@@ -74,38 +84,46 @@ int main(){
 			{
 			}
 			play(&current);
-			break;
+		}
+		else
+		{
+			if(choice[0] == 'R' && choice[1] == 'U' && choice[2] == 'L' && choice[3] == 'E' && choice[4] == 'S' && choice[5] == '\0')
+			{ //Displays the rules of blackjack to the screen
+				system("CLS");
+				cout<<"RULES OF BLACKJACK:\n";
+				cout<<"The aim is to get a score as close to 21 as possible, the closest player wins.\n";
+				cout<<"Cards 2 to 10 are equal to there value.\n";
+				cout<<"King,Queen and Jack are equal to 10 and Ace is equal to 1 or 11 depending on the players choice.\n";
+				cout<<"Each player starts with 2 cards and each turn the player gets the choice to stand(keep the hand) or hit(take a card from the deck).\n";
+				cout<<"This goes on until the player either stands or goes bust(has a hand with a higher value than 21), if the player goes bust they lose.\n";
+				cout<<"When all players are done, the dealer shows his hand, if he has a blackjack (21) all players loose unless they also have blackjack in which case they have there bet returned.\n";
+				cout<<"If the Dealers hand is lower than 17 then they hit, else they stand.\n";
+				cout<<"If they Dealer goes bust all they player wins, else any player with more points than the dealer wins, and get a bouns equal to half there original wager.\n\n";
+				cin.get();
+				cin.ignore();
+			}
+			else
+			{
+				if(choice[0] == 'C' && choice[1] == 'R' && choice[2] == 'E' && choice[3] == 'D' && choice[4] == 'I' && choice[5] == 'T' && choice[6] == 'S' && choice[7] == '\0')
+				{//Displays the credits to the screen
+					system("CLS");
+					cout<<"CREDITS:\nMade by Jamie Ronald John Slowgrove\n\n";
+					cin.get();
+					cin.ignore();
+				}
+				else
+				{
+					if(choice[0] == 'E' && choice[1] == 'N' && choice[2] == 'D'  && choice[3] == '\0')
+					{
+					on = false; //ends the loop, and thus the game
+					}
 
-		case 'R':
-		case 'r': //Displays the rules of blackjack to the screen
-			system("CLS");
-			cout<<"RULES OF BLACKJACK:\n";
-			cout<<"The aim is to get a score as close to 21 as possible, the closest player wins.\n";
-			cout<<"Cards 2 to 10 are equal to there value.\n";
-			cout<<"King,Queen and Jack are equal to 10 and Ace is equal to 1 or 11 depending on the players choice.\n";
-			cout<<"Each player starts with 2 cards and each turn the player gets the choice to stand(keep the hand) or hit(take a card from the deck).\n";
-			cout<<"This goes on until the player either stands or goes bust(has a hand with a higher value than 21), if the player goes bust they lose.\n";
-			cout<<"When all players are done, the dealer shows his hand, if he has a blackjack (21) all players loose unless they also have blackjack in which case they have there bet returned.\n";
-			cout<<"If the Dealers hand is lower than 17 then they hit, else they stand.\n";
-			cout<<"If they Dealer goes bust all they player wins, else any player with more points than the dealer wins, and get a bouns equal to half there original wager.\n\n";
-			system("pause");
-			break;
-
-		case 'C':
-		case 'c'://Displays the credits to the screen
-			system("CLS");
-			cout<<"CREDITS:\nMade by Jamie Ronald John Slowgrove\n\n";
-			system("pause");
-			break;
-
-		case 'E':
-		case 'e':
-			on = false;
-			break;
-
-		default:
-
-			break;
+					else
+					{
+						//loops back to user input
+					}
+				}	
+			}
 		}
 	}
 	return 0;
@@ -390,10 +408,9 @@ void play(int* current)
 		cout<<"\n\nDealer's shown card: ";
 		hand(1, dealerHand);// dealers first card
 		cout<<endl;
-
 		for (int i = 0; i < ace; i++)
 		{
-			while(a)
+			a == true;
 			{
 				int temp;
 				cout<<"\n\nWhat value for the Ace? (1/11)\n";
@@ -603,7 +620,7 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[], int bet
 		}
 		else
 		{
-			if (dealerScore == 21)
+			if (dealerScore == 21 && playerScore == 21)
 			{
 				cout << "\n\nDRAW!";
 				cont = false;
