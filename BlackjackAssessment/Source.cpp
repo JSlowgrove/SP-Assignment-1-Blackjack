@@ -10,7 +10,7 @@ using namespace std;
 //global declarations
 //------------------------------------------------------------------------------------------------------------------------------------
 void splash(), title(), gameSetup(), play(int*), flip(int, char), win(), lose(), again();
-int money = 0;
+int money;
 struct cardStruct
 {
 	int num;
@@ -31,13 +31,14 @@ int main()
 {
 	splash();//display splash screen
 	title();//display title screen
+	money = 1000;
 	int current, index;
 	bool on = true, first = true;
 	system("CLS");
-	char choice[21];
+	char input[21];
 	for (index = 0; index < 21; index++)//initalise array
 	{
-		choice[index] = 0;
+		input[index] = 0;
 	}
 	while(on)
 	{
@@ -50,31 +51,28 @@ int main()
 		cout<<"		|  -  |\n";
 		cout<<"		|Cards|\n";
 		cout<<"		 ----- \n\n";
-		cout<<"Welcome to Alpha Cards - Blackjack, please choose your task:\n[Play, Rules, Credits, End]\n";
-		cin>>&choice[0];
+		cout<<"Current money: "<<money<<" coins\n"<<endl;
+		cout<<"Welcome to Alpha Cards - Blackjack, please choose your task:\n(Play, Rules, Credits, End)\n";
+		cin>>&input[0];
 		for (index = 0; index < 21; index++)//sets choice uppercase for validation
 		{
-			choice[index] = toupper(choice[index]);
+			input[index] = toupper(input[index]);
 		}
-		if(choice[0] == 'P' && choice[1] == 'L' && choice[2] == 'A' && choice[3] == 'Y'  && choice[4] == '\0')
+		if(input[0] == 'P' && input[1] == 'L' && input[2] == 'A' && input[3] == 'Y'  && input[4] == '\0')
 		{
 			system("CLS");
 			if (money == 0 || money < 0) //if the player has no money then they are given £1000 to play with
 			{
 				cout<<endl<<"As you have no money your number of coins in casino credit have been set to 1000"<<endl<<"and the casino has taken your most valuable possession as collateral"<<endl<<endl;
 				money = 1000;
-				system("pause");
 				cin.ignore();
 				cin.get();
+				system("CLS");
 			}
-			else // if the player has money then it is displayed
+			else
 			{
-				cout<<"Current money: "<<money<<" coins"<<endl;
-				system("pause");
-				cin.ignore();
-				cin.get();
 			}
-			if (first == true || 52 - current < 22) //checks if need to shuffle [needs to shuffle if has not been shuffled or if has reached the end of the deck (22 is the max number of cards that can be used in a game)]
+			if (first == true || 52 - current < 24) //checks if need to shuffle [needs to shuffle if has not been shuffled or if has reached the end of the deck (22 is the max number of cards that can be used in a game)]
 			{
 				current = 0;
 				first = false;
@@ -87,7 +85,7 @@ int main()
 		}
 		else
 		{
-			if(choice[0] == 'R' && choice[1] == 'U' && choice[2] == 'L' && choice[3] == 'E' && choice[4] == 'S' && choice[5] == '\0')
+			if(input[0] == 'R' && input[1] == 'U' && input[2] == 'L' && input[3] == 'E' && input[4] == 'S' && input[5] == '\0')
 			{ //Displays the rules of blackjack to the screen
 				system("CLS");
 				cout<<"RULES OF BLACKJACK:\n";
@@ -104,7 +102,7 @@ int main()
 			}
 			else
 			{
-				if(choice[0] == 'C' && choice[1] == 'R' && choice[2] == 'E' && choice[3] == 'D' && choice[4] == 'I' && choice[5] == 'T' && choice[6] == 'S' && choice[7] == '\0')
+				if(input[0] == 'C' && input[1] == 'R' && input[2] == 'E' && input[3] == 'D' && input[4] == 'I' && input[5] == 'T' && input[6] == 'S' && input[7] == '\0')
 				{//Displays the credits to the screen
 					system("CLS");
 					cout<<"CREDITS:\nMade by Jamie Ronald John Slowgrove\n\n";
@@ -113,7 +111,7 @@ int main()
 				}
 				else
 				{
-					if(choice[0] == 'E' && choice[1] == 'N' && choice[2] == 'D'  && choice[3] == '\0')
+					if(input[0] == 'E' && input[1] == 'N' && input[2] == 'D'  && input[3] == '\0')
 					{
 					on = false; //ends the loop, and thus the game
 					}
@@ -208,20 +206,20 @@ void gameSetup()
 		switch (i)
 		{
 		case 0:
-			set = '\x03';
+			set = '\x03';//heart
 			break;
 		case 1:
-			set = '\x04';
+			set = '\x04';//diamond
 			break;
 		case 2:
-			set = '\x05';
+			set = '\x05';//club
 			break;
 		case 3:
-			set = '\x06';
+			set = '\x06';//spade
 			break;
 		}
 
-		for (int a = 1; a < 14; a++)
+		for (int a = 1; a < 14; a++)//sets cards number
 		{
 			card[x].set = set;
 			card[x].num = a;
@@ -255,7 +253,7 @@ void gameSetup()
 			}
 		}
 	}
-	for (int i = 0; i < 52; i++) //fill the origional deck with the shuffled deck
+	for (int i = 0; i < 52; i++) //fill the original deck with the shuffled deck
 	{
 		card[i].num = temp[i].num;
 		card[i].set = temp[i].set;
@@ -267,69 +265,99 @@ void gameSetup()
 //------------------------------------------------------------------------------------------------------------------------------------
 void play(int* current)
 {
-	bool cont = true, playerBlackjack = false, dealerBlackjack = false, a = false;
-	cardStruct dealerHand[11];
-	cardStruct playerHand[11];
+	bool cont = true, playerBlackjack = false, dealerBlackjack = false, aceGiven = false, betting = true;
+	cardStruct dealerHand[12];
+	cardStruct playerHand[12];
 	int bet  = 0;
-	char* choice;
-	choice = new char[100];
-
+	char input[21];
+	for (int index = 0; index < 21; index++)//initalise array
+	{
+		input[index] = 0;
+	}
 	int cardsInHand = 2, playerScore = 0, ace = 0;
 	//------------------------------------------------------------------------------------------------------------------------------------
 	//asks how much money that the player wants to bet
 	//------------------------------------------------------------------------------------------------------------------------------------
-	cout<<"How much do you want to bet?"<<endl;
-	cin>>bet;
-	system("CLS");
+	int index, check;
+	bool valid;
+	while(betting == true)
+	{
+		cout<<"Current money: "<<money<<" coins"<<endl;
+		cout<<"How much do you want to bet?"<<endl;
+		cin>>&input[0];
+		index = 0;
+		valid = true;
+		while (input[index] != '\0')
+		{
+			check = input[index] - 48; //converts char to equivilent int if a number
+			if (check < 10 && check > -1)//checks if a number
+			{
+			}
+			else
+			{
+				valid = false;
+			}
+			index++;
+		}
+		if (valid == true)
+		{
+			bet = atoi (input); //converts the c-string to an integer
+			if (bet <= money)//checks if player has enough money to place the bet
+			{
+				betting = false;
+			}
+		}
+		system("CLS");
+	}
 	//------------------------------------------------------------------------------------------------------------------------------------
 	//drawing first 2 cards for dealer and player
 	//------------------------------------------------------------------------------------------------------------------------------------
-	playerHand[0] = card[*current];
-	if (playerHand[0].num == 1)
+	playerHand[0] = card[*current]; //player first card
+	if (playerHand[0].num == 1)//ace
 	{
 		ace++;
-		a=true;
+		aceGiven=true;
 	}
 	else
 	{
-		if (playerHand[0].num > 9)
+		if (playerHand[0].num > 9)//10, King, Queen, Jack
+		{
+			playerScore = playerScore + 10; 
+		}
+		else
+		{
+			playerScore = playerScore + playerHand[0].num;//2 to 9
+		}
+	}
+	flip(playerHand[0].num, playerHand[0].set); //displays card to screen
+	(*current)++;
+	dealerHand[0] = card[*current];//dealer first card
+	(*current)++;
+	playerHand[1] = card[*current];//player second card
+	if (playerHand[1].num == 1)// ace
+	{
+		ace++;
+		aceGiven=true;
+	}
+	else
+	{
+		if (playerHand[1].num > 9)//10,King,Queen,Jack
 		{
 			playerScore = playerScore + 10;
 		}
 		else
 		{
-			playerScore = playerScore + playerHand[0].num;
+			playerScore = playerScore + playerHand[1].num;// 2-9
 		}
 	}
-	flip(playerHand[0].num, playerHand[0].set);
+	flip(playerHand[1].num, playerHand[1].set);//display player second card
 	(*current)++;
-	dealerHand[0] = card[*current];
-	(*current)++;
-	playerHand[1] = card[*current];
-	if (playerHand[1].num == 1)
-	{
-		ace++;
-		a=true;
-	}
-	else
-	{
-		if (playerHand[1].num > 9)
-		{
-			playerScore = playerScore + 10;
-		}
-		else
-		{
-			playerScore = playerScore + playerHand[1].num;
-		}
-	}
-	flip(playerHand[1].num, playerHand[1].set);
-	(*current)++;
-	dealerHand[1] = card[*current];
+	dealerHand[1] = card[*current]; //dealers second card
 	(*current)++;
 	system("CLS");
 	cout<<"\n\n\n\t\tDEALER'S CARD:";
 	Sleep(1000);
-	flip(dealerHand[0].num, dealerHand[0].set);
+	flip(dealerHand[0].num, dealerHand[0].set);//display dealers first card
 
 	//------------------------------------------------------------------------------------------------------------------------------------
 	//checks for inital blackjack
@@ -398,7 +426,7 @@ void play(int* current)
 	//------------------------------------------------------------------------------------------------------------------------------------
 	//Players Turn
 	//------------------------------------------------------------------------------------------------------------------------------------
-	bool stand = false;
+	bool stand = false, aceCheck;
 	while (cont)
 	{
 		system("CLS");
@@ -408,50 +436,79 @@ void play(int* current)
 		cout<<"\n\nDealer's shown card: ";
 		hand(1, dealerHand);// dealers first card
 		cout<<endl;
-		for (int i = 0; i < ace; i++)
+		for (int i = 0; i < ace; i++)// if the player has an ace it asks the player for its value
 		{
-			a == true;
+			aceGiven = true;
 			{
-				int temp;
-				cout<<"\n\nWhat value for the Ace? (1/11)\n";
-				cin>>temp;
-				if (temp==1)
+				int temp = 0;
+				aceCheck = true;
+				while(aceCheck)
 				{
-					playerScore++;
-					a=false;
-				}
-				else
-				{
-					if (temp==11)
+					cout<<"\n\nWhat value for the Ace? (1/11)\n";
+					cin>>&input[0];
+					index = 0;
+					valid = true;
+					while (input[index] != '\0')
 					{
-						playerScore = playerScore + 11;
-						a=false;
+						check = input[index] - 48; //converts char to equivilent int if a number
+						if (check < 10 && check > -1)//checks if a number
+						{
+						}
+						else
+						{
+							valid = false;
+						}
+						index++;
+					}
+					if (valid == true)
+					{
+						temp = atoi (input); //converts the c-string to an integer
+					}
+					if (temp==1)
+					{
+						playerScore++;
+						aceGiven=false;
+						aceCheck = false;
+					}
+					else
+					{
+						if (temp==11)
+						{
+							playerScore = playerScore + 11;
+							aceGiven=false;
+							aceCheck = false;
+						}
 					}
 				}
 			}
-			ace=0;
+
 		}
+		ace=0;
 		if (playerScore <= 21){
 			cout<<"\nCard Score: "<<playerScore<<endl;
-			cout<<"\nHit or Stand? (H/S)\n";
-			cin>>choice;
-			if(choice[0] == 'H' || choice[0] == 'h')
+			cout<<"\nHit or Stand? (Hit/Stand)\n";//asks if the play wants to hit or stand
+			cin>>&input[0];
+			for (int i = 0; i < 21; i++)//sets choice uppercase for validation
+			{
+				input[i] = toupper(input[i]);
+			}
+			if(input[0] == 'H' && input[1] == 'I' && input[2] == 'T' && input[3] == '\0')
 			{
 				playerHand[cardsInHand] = card[*current];
-				if (playerHand[cardsInHand].num == 1)
+				if (playerHand[cardsInHand].num == 1)//ace
 				{
 					ace++;
-					a=true;
+					aceGiven=true;
 				}
 				else
 				{
-					if (playerHand[cardsInHand].num > 9)
+					if (playerHand[cardsInHand].num > 9)//10,King,Queen,Jack
 					{
 						playerScore = playerScore + 10;
 					}
 					else
 					{
-						playerScore = playerScore + playerHand[cardsInHand].num;
+						playerScore = playerScore + playerHand[cardsInHand].num;//2-9
 					}
 				}
 				flip(playerHand[cardsInHand].num, playerHand[cardsInHand].set);
@@ -460,7 +517,7 @@ void play(int* current)
 			}
 			else
 			{
-				if (choice[0] == 'S' || choice[0] == 's')
+				if (input[0] == 'S' && input[1] == 'T' && input[2] == 'A' && input[3] == 'N' && input[4] == 'D' && input[5] == '\0')
 				{
 					stand = true;
 					cont = false;
@@ -483,9 +540,6 @@ void play(int* current)
 	{
 		dealerTurn(&current, playerScore, dealerHand,bet);
 	}
-
-	delete [] choice;
-	choice = 0;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------
@@ -495,88 +549,90 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[], int bet
 {	
 	int cardsInHand = 2;
 	bool cont = true;
-	bool a = false;
+	bool aceGiven = false;
 	int dealerScore = 0;
 	int ace = 0;
-	if (dealerHand[0].num == 1)
+	if (dealerHand[0].num == 1)//ace
 	{
 		ace++;
-		a=true;
+		aceGiven=true;
 	}
 	else
 	{
-		if (dealerHand[0].num > 9)
+		if (dealerHand[0].num > 9)//10,King,Queen,Jack
 		{
 			dealerScore = dealerScore + 10;
 		}
 		else
 		{
-			dealerScore = dealerScore + dealerHand[0].num;
+			dealerScore = dealerScore + dealerHand[0].num;//2-9
 		}
 	}
-	if (dealerHand[1].num == 1)
+	if (dealerHand[1].num == 1)//ace
 	{
 		ace++;
-		a=true;
+		aceGiven=true;
 	}
 	else
 	{
-		if (dealerHand[1].num > 9)
+		if (dealerHand[1].num > 9)//10,King,Queen,Jack
 		{
 			dealerScore = dealerScore + 10;
 		}
 		else
 		{
-			dealerScore = dealerScore + dealerHand[1].num;
+			dealerScore = dealerScore + dealerHand[1].num;//2-9
 		}
 	}
-	flip(dealerHand[1].num, dealerHand[1].set);
+	flip(dealerHand[1].num, dealerHand[1].set);//ace
 	while (cont)
 	{
 		system("CLS");
 		cout<<"Dealers hand: ";
 		hand(cardsInHand, dealerHand);//displaying hand
 
-		for (int i = 0; i < ace; i++)
+		for (int i = 0; i < ace; i++)//ace value choice
 		{
-			while(a)
+			while(aceGiven)
 			{
 				if (dealerScore + 11 > 21)
 				{
 					dealerScore++;
-					a=false;
-					cout<<"Dealer chooses 1 for the value of the Ace\n";
+					aceGiven=false;
+					cout<<"\nDealer chooses 1 for the value of the Ace\n";
 				}
 				else
 				{
 					dealerScore = dealerScore + 11;
-					a=false;
-					cout<<"Dealer chooses 11 for the value of the Ace\n";
+					aceGiven=false;
+					cout<<"\nDealer chooses 11 for the value of the Ace\n";
 				}
 			}
-			ace=0;
+			
 		}
+		ace=0;
 		cout<<"\nThe Dealer's Score: "<<dealerScore<<endl;
 		cin.ignore();
 		cin.get();
-		if (dealerScore < 21){
-			if(dealerScore + 10 <= 21 || dealerScore <= 14)
+		if (dealerScore <= 21)
+		{//if dealer isn't bust or has 21
+			if(dealerScore + 10 <= 21 || dealerScore < 17 || dealerScore < playerScore) // if dealer score is unable to go bust, or is under 17 or is losing, dealer hits
 			{
 				dealerHand[cardsInHand] = card[**current];
-				if (dealerHand[cardsInHand].num == 1)
+				if (dealerHand[cardsInHand].num == 1)//ace
 				{
 					ace++;
-					a=true;
+					aceGiven=true;
 				}
 				else
 				{
-					if (dealerHand[cardsInHand].num > 9)
+					if (dealerHand[cardsInHand].num > 9)//10,King,Queen,Jack
 					{
 						dealerScore = dealerScore + 10;
 					}
 					else
 					{
-						dealerScore = dealerScore + dealerHand[cardsInHand].num;
+						dealerScore = dealerScore + dealerHand[cardsInHand].num;//2-9
 					}
 				}
 				flip(dealerHand[cardsInHand].num, dealerHand[cardsInHand].set);
@@ -585,27 +641,13 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[], int bet
 			}
 			else
 			{
-				if(dealerScore < playerScore){
-					dealerHand[cardsInHand] = card[**current];
-					if (dealerHand[cardsInHand].num == 1)
-					{
-						ace++;
-						a=true;
-					}
-					else
-					{
-						if (dealerHand[cardsInHand].num > 9)
-						{
-							dealerScore = dealerScore + 10;
-						}
-						else
-						{
-							dealerScore = dealerScore + dealerHand[cardsInHand].num;
-						}
-					}
-					flip(dealerHand[cardsInHand].num, dealerHand[cardsInHand].set);
-					(**current)++;
-					cardsInHand++;
+				if (dealerScore == playerScore)//if dealer and player have the same score its a draw
+				{
+					cout << "\n\nDRAW!";
+					cont = false;
+					cin.ignore();
+					cin.get();
+					//draw
 				}
 				else
 				{
@@ -616,27 +658,18 @@ void dealerTurn(int** current, int playerScore, cardStruct dealerHand[], int bet
 					cin.get();
 					//lose
 				}
+			
 			}
+			
 		}
 		else
 		{
-			if (dealerScore == 21 && playerScore == 21)
-			{
-				cout << "\n\nDRAW!";
-				cont = false;
-				cin.ignore();
-				cin.get();
-				//draw
-			}
-			else
-			{
-				cout << "\n\nDEALER IS BUST!";
-				money = money + bet;
-				cont = false;
-				cin.ignore();
-				cin.get();
-				//win
-			}
+			cout << "\n\nDEALER IS BUST!";
+			money = money + bet;
+			cont = false;
+			cin.ignore();
+			cin.get();
+			//win
 		}
 	}
 }
